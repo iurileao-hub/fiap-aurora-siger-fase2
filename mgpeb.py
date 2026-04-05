@@ -190,8 +190,7 @@ def dequeue(queue):
 
 def push(stack, item):
     """Adiciona um item ao topo da pilha (operação LIFO)."""
-    # TODO: adicionar item ao topo (final) de stack
-    pass
+    stack.append(item)
 
 
 def pop(stack):
@@ -199,9 +198,9 @@ def pop(stack):
     Remove e retorna o item do topo da pilha (operação LIFO).
     Retorna None se a pilha estiver vazia.
     """
-    # TODO: verificar se stack está vazia (retornar None)
-    # TODO: remover e retornar o último elemento (topo)
-    pass
+    if len(stack) == 0:
+        return None
+    return stack.pop()
 
 
 def peek(stack):
@@ -209,15 +208,14 @@ def peek(stack):
     Consulta o item do topo da pilha sem removê-lo.
     Retorna None se a pilha estiver vazia.
     """
-    # TODO: verificar se stack está vazia (retornar None)
-    # TODO: retornar o último elemento sem remover (dica: índice -1)
-    pass
+    if len(stack) == 0:
+        return None
+    return stack[-1]
 
 
 def is_empty(structure):
     """Verifica se uma estrutura (fila, pilha ou lista) está vazia."""
-    # TODO: retornar True se len() for 0
-    pass
+    return len(structure) == 0:
 
 
 # =============================================================================
@@ -235,30 +233,44 @@ def check_landing_authorization(module, conditions):
         F = combustível suficiente (fuel_level >= 20%)
         A = condições atmosféricas favoráveis
         L = zona de pouso livre
-        E = emergência (cargo_criticality == 5) — porta NOT sobre normalidade
         S = sensores íntegros
+        E = emergência (cargo_criticality == 5) — porta NOT sobre normalidade
+        
 
     Quando o pouso é negado, um alerta é empilhado na alert_stack
     contendo o motivo do bloqueio.
 
     Retorna: True se autorizado, False caso contrário.
     """
-    # TODO: extrair as variáveis booleanas do module e conditions
-    # fuel_ok = ...                   # F: module["fuel_level"] >= 20.0
-    # atmosphere_ok = ...             # A: conditions["atmosphere_ok"]
-    # zone_free = ...                 # L: conditions["landing_zone_free"]
-    # sensors_ok = ...                # S: conditions["sensors_ok"]
-    # emergency = ...                 # E: module["cargo_criticality"] == 5
 
-    # TODO: montar a expressão booleana composta
-    # authorized = fuel_ok and atmosphere_ok and (zone_free or emergency) and sensors_ok
+    fuel_ok = module["fuel_level"] >= 20
+    atmosphere_ok = conditions["atmosphere_ok"]
+    zone_free = conditions["landing_zone_free"]
+    sensors_ok = conditions["sensors_ok"]
+    emergency = module["cargo_criticality"] == 5
 
-    # TODO: se NÃO autorizado, montar lista de motivos (reasons) e criar
-    #   um dict de alerta com chaves: module_id, module_name, reason, timestamp
-    #   Empilhar o alerta na alert_stack usando push()
+    authorized = fuel_ok and atmosphere_ok and (zone_free or emergency) and sensors_ok
 
-    # TODO: retornar authorized (True ou False)
-    pass
+    if not authorized:
+        reasons = []
+        if not fuel_ok:
+            reasons.append(f"Combustível insuficiente ({module['fuel_level']:.1f}%)")
+        if not atmosphere_ok:
+            reasons.append("Condições atmosféricas desfavoráveis")
+        if not zone_free and not emergency:
+            reasons.append("Zona de pouso ocupada")
+        if not sensors_ok:
+            reasons.append("Falha nos sensores")
+
+        alert = {
+            "id": module["id"],
+            "name": module["name"],
+            "reason": "; ".join(reasons),
+            "timestamp": module["estimated_arrival"],
+        }
+        push(alert_stack, alert)
+
+    return authorized
 
 
 # =============================================================================
