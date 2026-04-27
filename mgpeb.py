@@ -148,17 +148,15 @@ class SearchAlgorithms:
         return [module for module in list_to_modules if module.type.value == priority]
 
 # Implementing sorting algorithms for the modules based on their priority and arrival time
-
 class SortAlgorithms: 
     
     @staticmethod
     def bubble_sort(modules: List[Module], camp: str=  "priority") -> List[Module]:
         """
         Sorts a list of modules using the Bubble Sort algorithm.
-        
         Args:
                 modules: A list of Module objects to be sorted.
-        Returns:
+        Returns: 
                 A new list of Module objects sorted by priority or arrival time.
         """
         
