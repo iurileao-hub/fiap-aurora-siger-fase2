@@ -53,14 +53,91 @@ class Module:
 class SearchAlgorithms:
     
     @staticmethod
-    def linear_search():
-        pass
+    def linear_search(list_to_search: List[Any], target: Any) -> Optional[int]:
+        """
+        Performs a linear search for the target item in the list.
+        
+        Args:
+                list: A list of items to search through.
+                target: The item to search for in the list.
+        Returns:
+                The index of the target item if found, otherwise None.
+        """
+        
+        if list_to_search is None:
+            raise ValueError("The list to search cannot be None.")
+        elif target is None:
+            raise ValueError("The target to search cannot be None.")
+            
+        begin_time = time.perf_counter()
+        comparation = 0
+        
+        for index, module in enumerate(list_to_search):
+            comparation += 1 
+            
+            if hasattr(module, 'id') and module.id == target:
+            
+                end_time = time.perf_counter()
+                
+                print(
+                    f"Linear search found target {target} at index {index} " 
+                    f"in {end_time - begin_time:.6f} seconds"
+                    f" with {comparation} comparisons."
+                )
+                
+                return index
+        
+        return None # Return None if target is not found
     
     @staticmethod
-    def binary_search():
-        pass
-    
-    
+    def binary_search(sorted_list: List[Any], target: Any) -> Optional[int]:
+        """
+        Performs a binary search for the target item in a sorted list.
+        
+        Args:
+                sorted_list: A list of items that is already sorted.
+                target: The item to search for in the list.
+        Returns:
+                The index of the target item if found, otherwise None.
+        """
+        
+        if sorted_list is None:
+            raise ValueError("The list to search cannot be None.")
+        elif target is None:
+            raise ValueError("The target to search cannot be None.")
+            
+        begin_time = time.perf_counter()
+        comparation = 0
+        left, right = 0, len(sorted_list) - 1
+        
+        while left <= right:
+            mid = (left + right) // 2
+            comparation += 1
+            
+            if hasattr(sorted_list[mid], 'id') and sorted_list[mid].id == target:
+                end_time = time.perf_counter()
+                
+                print(
+                    f"Binary search found target {target} at index {mid} " 
+                    f"in {end_time - begin_time:.6f} seconds"
+                    f" with {comparation} comparisons."
+                )
+                
+                return mid
+            elif hasattr(sorted_list[mid], 'id') and sorted_list[mid].id < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+        
+        end_time = time.perf_counter()
+        
+        print(
+            f"Binary search did not find target {target} after " 
+            f"{end_time - begin_time:.6f} seconds with {comparation} comparisons."
+        )
+        
+        return None # Return None if target is not found
+          
 # =============================================================================
 # [2] ESTRUTURAS LINEARES — Operações de fila, pilha e verificação
 # =============================================================================
