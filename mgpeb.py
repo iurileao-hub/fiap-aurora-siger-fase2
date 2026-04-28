@@ -66,7 +66,7 @@ class Module:
     @property
     def eta(self):
         """ETA em horas a partir do início da missão (distance / speed)."""
-        return self.distance / self.speed
+        return math.ceil(self.distance / self.speed)
 
     @property
     def eta_str(self):
@@ -295,12 +295,12 @@ class Vector:
 
     def sort_multi(self):
         """
-        Bubble Sort multi-critério: ETA → combustível → prioridade.
+        Bubble Sort multi-critério: ETA → prioridade → combustível.
 
         Ordem de desempate:
             1. eta (ascendente) — módulo que chega primeiro pousa primeiro
-            2. fuel_level (ascendente) — quem está no limite pousa com prioridade
-            3. priority (ascendente) — critério de missão como tiebreaker final
+            2. priority (ascendente) — critério de missão como segundo critério
+            3. fuel_level (ascendente) — quem está no limite pousa com prioridade
 
         Complexidade: O(n²) pior caso, O(n) melhor caso.
         """
@@ -310,7 +310,7 @@ class Vector:
             for j in range(n - i - 1):
                 a = self._data[j]
                 b = self._data[j + 1]
-                if (a.eta, a.fuel_level, a.priority) > (b.eta, b.fuel_level, b.priority):
+                if (a.eta, a.priority, a.fuel_level) > (b.eta, b.priority, b.fuel_level):
                     self._data[j], self._data[j + 1] = self._data[j + 1], self._data[j]
                     swapped = True
             if not swapped:
@@ -564,7 +564,7 @@ def run_landing_simulation():
 
     Fluxo:
         1. Recarrega todos os módulos na fila de pouso
-        2. Ordena a fila multi-critério: ETA → combustível → prioridade
+        2. Ordena a fila multi-critério: ETA → prioridade → combustível
         3. Processa cada módulo: verifica autorização via regras booleanas
         4. Módulos autorizados vão para landed_modules (Vector)
         5. Módulos bloqueados vão para waiting_modules (Vector) + alerta na Stack
@@ -586,7 +586,7 @@ def run_landing_simulation():
     atm = "OK" if landing_conditions["atmosphere_ok"] else "DESFAVORÁVEL"
     zone = "LIVRE" if landing_conditions["landing_zone_free"] else "OCUPADA"
     print(f"  Condições: Atmosfera={atm} | Zona={zone} | Sensores=por módulo")
-    print(f"  Ordem de pouso: ETA → combustível → prioridade")
+    print(f"  Ordem de pouso: ETA → prioridade → combustível")
     print()
     print(f"  Processando fila de pouso ({landing_queue.size()} módulos)...")
     print("-" * 60)
@@ -666,7 +666,7 @@ def menu_sort():
     """Submenu de ordenação da fila de pouso."""
     print()
     print("--- Ordenar Fila de Pouso ---")
-    print("  1. Multi-critério: ETA → combustível → prioridade (Bubble Sort)")
+    print("  1. Multi-critério: ETA → prioridade → combustível (Bubble Sort)")
     print("  2. Por combustível (Selection Sort)")
     print("  3. Por prioridade (Bubble Sort)")
     print("  0. Voltar")
@@ -675,7 +675,7 @@ def menu_sort():
     match choice:
         case "1":
             landing_queue.sort_multi()
-            print("\n  Fila ordenada: ETA → combustível → prioridade.")
+            print("\n  Fila ordenada: ETA → prioridade → combustível.")
             display_modules(landing_queue, "Fila de Pouso")
         case "2":
             landing_queue.sort_by_fuel()
