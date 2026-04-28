@@ -29,7 +29,9 @@ FUEL_RANGE_MAX = 95.0
 SENSORS_OK_PROBABILITY = 0.95
 
 # Distância orbital de aproximação (km) e velocidade de aproximação (km/h).
-# Combinados determinam o ETA: eta_horas = distance / speed.
+# Combinados determinam o ETA: eta_horas = ceil(distance / speed),
+# arredondado para horas cheias para que empates ativem o desempate
+# multi-critério (priority, fuel_level) na ordenacao da fila de pouso.
 DISTANCE_RANGE_MIN = 200.0
 DISTANCE_RANGE_MAX = 800.0
 SPEED_RANGE_MIN = 100.0
@@ -44,8 +46,10 @@ class Module:
     Encapsula todos os atributos operacionais do módulo e o comportamento
     de randomização de cenário, que varia a cada execução da missão.
 
-    O ETA é derivado de distance / speed, não armazenado diretamente:
-    usar .eta (float horas) ou .eta_str (HH:MM) para exibição e ordenação.
+    O ETA é derivado de ceil(distance / speed), não armazenado diretamente:
+    usar .eta (int horas) ou .eta_str (HH:00) para exibição e ordenação.
+    O arredondamento para horas cheias é deliberado — produz empates que
+    ativam os critérios secundários da ordenação multi-critério.
     """
 
     def __init__(self, id, name, type, priority, fuel_level, mass,
@@ -65,8 +69,13 @@ class Module:
 
     @property
     def eta(self):
-        """ETA em horas a partir do início da missão (distance / speed)."""
-        return self.distance / self.speed
+        """ETA em horas inteiras a partir do início da missão.
+
+        Arredondado para o próximo inteiro com math.ceil para discretizar
+        a fila em horas cheias — empates resultantes são desempatados pelos
+        critérios secundários (priority, fuel_level) em sort_multi.
+        """
+        return math.ceil(self.distance / self.speed)
 
     @property
     def eta_str(self):
@@ -631,7 +640,7 @@ def display_module(module):
           f"\n | Crítico: {module.cargo_criticality}"
           f"\n | Sensores: {sens}"
           f"\n | Distância: {module.distance:.1f} km  |  Velocidade: {module.speed:.1f} km/h"
-          f"\n | ETA: {module.eta_str} ({module.eta:.2f}h desde início da missão)")
+          f"\n | ETA: {module.eta_str} ({module.eta}h desde início da missão)")
 
 
 def display_modules(modules, title):

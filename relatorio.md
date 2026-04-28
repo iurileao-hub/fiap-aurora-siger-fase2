@@ -58,7 +58,7 @@ A ordem de prioridade reflete uma hierarquia operacional discutida em detalhe na
 
 Cada módulo é instanciado a partir da classe `Module` (`mgpeb.py`, linhas 40–109) e carrega onze atributos: seis estáticos (`id`, `name`, `type`, `priority`, `mass` e `cargo_criticality`, vide Tabela 1) e cinco voláteis — `fuel_level` (%), `distance` (km — distância orbital de aproximação), `speed` (km/h — velocidade de aproximação), `sensors_ok` (booleano) e `status` (`queued`, `landed` ou `waiting`).
 
-O **horário estimado de chegada (ETA)** não é armazenado como atributo independente: é calculado dinamicamente como `eta = distance / speed`, exposto via `@property`. Essa decisão de design garante que qualquer alteração nas variáveis de aproximação propague-se automaticamente para o ETA, eliminando o risco de inconsistências entre dados redundantes. O ETA é apresentado em formato `HH:MM` com offset a partir de uma hora de início de missão (06:00).
+O **horário estimado de chegada (ETA)** não é armazenado como atributo independente: é calculado dinamicamente como `eta = math.ceil(distance / speed)`, exposto via `@property`. Essa decisão de design garante que qualquer alteração nas variáveis de aproximação propague-se automaticamente para o ETA, eliminando o risco de inconsistências entre dados redundantes. O arredondamento para o próximo inteiro discretiza o ETA em horas cheias — escolha deliberada que produz empates frequentes na fila e expõe a ordenação multi-critério (Seção 2.4): quando dois módulos chegam na mesma hora, o desempate é resolvido por prioridade de missão e, em última instância, por combustível. O ETA é apresentado em formato `HH:00` com offset a partir de uma hora de início de missão (06:00).
 
 ### 2.3 Cenário ambiental
 
@@ -73,7 +73,7 @@ Essas variáveis e os atributos voláteis dos módulos são reinicializados a ca
 
 O MGPEB organiza seu estado em quatro estruturas lineares distintas, cada uma escolhida pelo invariante de acesso adequado à sua função:
 
-- **`landing_queue`** (`Queue`, FIFO) — fila principal de módulos aguardando autorização. A política FIFO é reordenada antes da simulação por critério multivariado (ETA → prioridade → combustível), garantindo que o módulo com menor ETA desça primeiro, com desempate por prioridade de missão e, em última instância, urgência de combustível.
+- **`landing_queue`** (`Queue`, FIFO) — fila principal de módulos aguardando autorização. A política FIFO é reordenada antes da simulação por critério multivariado (ETA → prioridade → combustível): como o ETA é discretizado em horas cheias (Seção 2.2), empates são frequentes e ativam os critérios secundários — prioridade de missão e, em última instância, urgência de combustível.
 - **`landed_modules`** (`Vector`) — registro dos módulos já pousados com sucesso. Vetor permite consulta indexada e iteração sem restringir o ponto de inserção, adequado a uma estrutura terminal.
 - **`waiting_modules`** (`Vector`) — registro dos módulos com pouso adiado. Mesma justificativa do anterior, mantendo simetria estrutural.
 - **`alert_stack`** (`Stack`, LIFO) — pilha de alertas gerados a cada bloqueio de pouso. A política LIFO é deliberada: ao consultar a pilha, o operador vê primeiro os bloqueios mais recentes, seguindo a lógica *most-recent-first* típica de sistemas de monitoramento.
@@ -89,7 +89,7 @@ A documentação completa das três classes (`Vector`, `Queue` e `Stack`), inclu
 A autorização de pouso de cada módulo depende de cinco variáveis booleanas, derivadas dos atributos do módulo e do estado ambiental:
 
 | Símbolo | Variável | Origem | Significado |
-|:---:|---|---|---|
+|:----:|:------------|:------------------------------------------------|:----------------------------|
 | **F** | `fuel_ok` | `module.fuel_level >= 20` | Combustível suficiente para descida controlada |
 | **A** | `atmosphere_ok` | `landing_conditions["atmosphere_ok"]` | Atmosfera favorável (vento, visibilidade, sem tempestade) |
 | **L** | `zone_free` | `landing_conditions["landing_zone_free"]` | Zona de pouso disponível |
@@ -406,7 +406,7 @@ Todos os algoritmos de busca são **lineares**, escolha coerente com o porte da 
 
 ### A.6 Algoritmos de ordenação
 
-O protótipo implementa duas variantes clássicas, escolhidas por **previsibilidade e auditabilidade** (Seção 5). O **Bubble Sort multi-critério** (`sort_multi`) ordena pela tupla `(eta, priority, fuel_level)`, aproveitando a ordem lexicográfica nativa do Python — o segundo critério só é consultado em caso de empate no primeiro:
+O protótipo implementa duas variantes clássicas, escolhidas por **previsibilidade e auditabilidade** (Seção 5). O **Bubble Sort multi-critério** (`sort_multi`) ordena pela tupla `(eta, priority, fuel_level)`, aproveitando a ordem lexicográfica nativa do Python — o segundo critério só é consultado em caso de empate no primeiro. Essa cascata é exercitada na prática porque o ETA é discretizado em horas cheias (Seção 2.2): empates passam a ser frequentes, e a ordenação efetivamente alcança os critérios secundários em vez de terminar sempre na primeira coordenada da tupla:
 
 ```python
 for i in range(n):
