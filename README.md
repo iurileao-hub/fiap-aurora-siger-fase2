@@ -1,25 +1,69 @@
 # MGPEB — Módulo de Gerenciamento de Pouso e Estabilização de Base
 
-Protótipo em Python do sistema de gerenciamento de pouso de 12 módulos da colônia **Aurora Siger** em Marte.
+Protótipo em Python e relatório técnico do sistema de gerenciamento de pouso de 12 módulos da colônia **Aurora Siger** em Marte.
 
 Atividade Integradora da Fase 2 — Ciência da Computação, FIAP (2026).
 
-## Como executar
+## Entregáveis
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `relatorio.pdf` | Relatório técnico final em PDF |
+| `mgpeb.py` | Protótipo do MGPEB em Python |
+| `relatorio.md` | Fonte Markdown do relatório (renderizado em `relatorio.pdf`) |
+
+## Estrutura do repositório
+
+```
+.
+├── README.md
+├── LICENSE
+├── enunciado-atividade-integradora.md   # enunciado original da atividade
+├── mgpeb.py                             # protótipo executável do MGPEB
+├── relatorio.md                         # fonte Markdown do relatório
+├── relatorio.pdf                        # PDF final renderizado
+├── contextualizacao-historica.md        # texto-fonte da Seção 5 do relatório
+├── esg.md                               # texto-fonte da Seção 6 do relatório
+└── figuras/
+    ├── portas_logicas.dot/.png          # Figura 1 — diagrama de portas lógicas
+    ├── func_altitude.png                # Figura 2a — altitude de descida
+    ├── func_combustivel.png             # Figura 2b — consumo de combustível
+    ├── func_solar.png                   # Figura 3a — energia solar
+    ├── func_temperatura.png             # Figura 3b — temperatura superficial
+    ├── hierarquia_estruturas.dot/.png   # Figura A.1 — herança UML
+    ├── gerar_graficos.py                # script reproduzível dos gráficos matplotlib
+    └── header.tex                       # header LaTeX para o pacote subcaption
+```
+
+## Como executar o protótipo
 
 ```bash
 python3 mgpeb.py
 ```
 
-Sem dependências externas. Usa apenas `math` e `random` da biblioteca padrão.
+Sem dependências externas — usa apenas `math` e `random` da biblioteca padrão.
 
-## Estrutura do repositório
+## Como regerar o PDF do relatório
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `mgpeb.py` | Protótipo do MGPEB (código principal) |
-| `enunciado-atividade-integradora.md` | Enunciado completo da atividade |
-| `contextualizacao-historica.md` | Seção textual sobre evolução da computação e arquitetura |
-| `esg.md` | Reflexão sobre ESG e governança na base Aurora Siger |
+Requisitos: [Pandoc](https://pandoc.org/), uma distribuição LaTeX com `xelatex` (ex. [BasicTeX](https://tug.org/mactex/morepackages.html)), [matplotlib](https://matplotlib.org/) e [GraphViz](https://graphviz.org/).
+
+```bash
+# (opcional) regerar gráficos matplotlib
+python3 figuras/gerar_graficos.py
+
+# (opcional) regerar diagramas GraphViz
+dot -Tpng figuras/portas_logicas.dot       -o figuras/portas_logicas.png
+dot -Tpng figuras/hierarquia_estruturas.dot -o figuras/hierarquia_estruturas.png
+
+# compilar o PDF
+pandoc relatorio.md -o relatorio.pdf \
+  --pdf-engine=xelatex \
+  -V mainfont=Arial \
+  -V fontsize=10pt \
+  -V geometry=a4paper,margin=2cm \
+  -V linestretch=1.15 \
+  --include-in-header=figuras/header.tex
+```
 
 ## Equipe
 
@@ -31,6 +75,6 @@ Sem dependências externas. Usa apenas `math` e `random` da biblioteca padrão.
 | Iúri Leão de Almeida | RM570215 | iurileao@gmail.com |
 | Maria Sophia Domingues dos Santos | RM571209 | maria.sophia.domingues@gmail.com |
 
-## Licenca
+## Licença
 
 [MIT](LICENSE)
