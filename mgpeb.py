@@ -66,7 +66,7 @@ class Module:
     @property
     def eta(self):
         """ETA em horas a partir do início da missão (distance / speed)."""
-        return math.ceil(self.distance / self.speed)
+        return self.distance / self.speed
 
     @property
     def eta_str(self):

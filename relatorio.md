@@ -73,7 +73,7 @@ Essas variáveis e os atributos voláteis dos módulos são reinicializados a ca
 
 O MGPEB organiza seu estado em quatro estruturas lineares distintas, cada uma escolhida pelo invariante de acesso adequado à sua função:
 
-- **`landing_queue`** (`Queue`, FIFO) — fila principal de módulos aguardando autorização. A política FIFO é reordenada antes da simulação por critério multivariado (ETA → combustível → prioridade), garantindo que o módulo com menor ETA desça primeiro, com desempate por urgência de combustível e, em última instância, prioridade de missão.
+- **`landing_queue`** (`Queue`, FIFO) — fila principal de módulos aguardando autorização. A política FIFO é reordenada antes da simulação por critério multivariado (ETA → prioridade → combustível), garantindo que o módulo com menor ETA desça primeiro, com desempate por prioridade de missão e, em última instância, urgência de combustível.
 - **`landed_modules`** (`Vector`) — registro dos módulos já pousados com sucesso. Vetor permite consulta indexada e iteração sem restringir o ponto de inserção, adequado a uma estrutura terminal.
 - **`waiting_modules`** (`Vector`) — registro dos módulos com pouso adiado. Mesma justificativa do anterior, mantendo simetria estrutural.
 - **`alert_stack`** (`Stack`, LIFO) — pilha de alertas gerados a cada bloqueio de pouso. A política LIFO é deliberada: ao consultar a pilha, o operador vê primeiro os bloqueios mais recentes, seguindo a lógica *most-recent-first* típica de sistemas de monitoramento.
@@ -364,7 +364,7 @@ A herança permite que os algoritmos de busca (`search_by_type`, `search_min_fue
 
 ```python
 landing_queue.enqueue(modulo)         # entra no fim
-landing_queue.sort_multi()            # reordena: ETA → combustível → prioridade
+landing_queue.sort_multi()            # reordena: ETA → prioridade → combustível
 proximo = landing_queue.dequeue()     # retira o primeiro
 ```
 
@@ -404,13 +404,13 @@ Todos os algoritmos de busca são **lineares**, escolha coerente com o porte da 
 
 ### A.6 Algoritmos de ordenação
 
-O protótipo implementa duas variantes clássicas, escolhidas por **previsibilidade e auditabilidade** (Seção 5). O **Bubble Sort multi-critério** (`sort_multi`) ordena pela tupla `(eta, fuel_level, priority)`, aproveitando a ordem lexicográfica nativa do Python — o segundo critério só é consultado em caso de empate no primeiro:
+O protótipo implementa duas variantes clássicas, escolhidas por **previsibilidade e auditabilidade** (Seção 5). O **Bubble Sort multi-critério** (`sort_multi`) ordena pela tupla `(eta, priority, fuel_level)`, aproveitando a ordem lexicográfica nativa do Python — o segundo critério só é consultado em caso de empate no primeiro:
 
 ```python
 for i in range(n):
     swapped = False
     for j in range(n - i - 1):
-        if (a.eta, a.fuel_level, a.priority) > (b.eta, b.fuel_level, b.priority):
+        if (a.eta, a.priority, a.fuel_level) > (b.eta, b.priority, b.fuel_level):
             self._data[j], self._data[j+1] = self._data[j+1], self._data[j]
             swapped = True
     if not swapped: break       # sai cedo se já ordenado
