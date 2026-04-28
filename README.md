@@ -26,6 +26,7 @@ Atividade Integradora da Fase 2 — Ciência da Computação, FIAP (2026).
 ├── esg.md                               # texto-fonte da Seção 6 do relatório
 └── figuras/
     ├── portas_logicas.dot/.png          # Figura 1 — diagrama de portas lógicas
+    ├── gate_and.svg, gate_or.svg        # símbolos ANSI/IEEE referenciados pelo .dot
     ├── func_altitude.png                # Figura 2a — altitude de descida
     ├── func_combustivel.png             # Figura 2b — consumo de combustível
     ├── func_solar.png                   # Figura 3a — energia solar
@@ -52,6 +53,8 @@ Requisitos: [Pandoc](https://pandoc.org/), uma distribuição LaTeX com `xelatex
 python3 figuras/gerar_graficos.py
 
 # (opcional) regerar diagramas GraphViz
+# obs.: portas_logicas.dot referencia gate_and.svg e gate_or.svg via image=,
+# então ambos precisam estar em figuras/ no momento da renderização
 dot -Tpng figuras/portas_logicas.dot       -o figuras/portas_logicas.png
 dot -Tpng figuras/hierarquia_estruturas.dot -o figuras/hierarquia_estruturas.png
 
