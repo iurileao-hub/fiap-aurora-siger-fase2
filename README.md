@@ -10,7 +10,7 @@ Atividade Integradora da Fase 2 — Ciência da Computação, FIAP (2026).
 python3 mgpeb.py
 ```
 
-Sem dependências externas. Usa apenas `math` da biblioteca padrão.
+Sem dependências externas. Usa apenas `math` e `random` da biblioteca padrão.
 
 ## Estrutura do repositório
 
@@ -18,17 +18,17 @@ Sem dependências externas. Usa apenas `math` da biblioteca padrão.
 |---------|-----------|
 | `mgpeb.py` | Protótipo do MGPEB (código principal) |
 | `enunciado-atividade-integradora.md` | Enunciado completo da atividade |
-| `enunciado-contextualizacao-historica.md` | Roteiro — contextualização histórica/arquitetural |
-| `enunciado-reflexao-esg.md` | Roteiro — reflexão ESG e governança |
-| `docs/` | Specs e documentação de design |
+| `contextualizacao-historica.md` | Seção textual sobre evolução da computação e arquitetura |
+| `esg.md` | Reflexão sobre ESG e governança na base Aurora Siger |
+| `rascunhos/` | Roteiros e versões intermediárias de apoio |
 
 ## Equipe
 
 | Nome | RM | E-mail |
 |------|----|--------|
-| Gabriel Carmona Bittencourt | — | gabrielcarmabittencourtpy@gmail.com |
-| Carlos Eugênio Rodrigues de Andrade Filho | — | carloseugenioprofissional@gmail.com |
-| Marcio Francisco dos Santos Junior | — | marciofsantos65@gmail.com |
+| Gabriel Carmona Bittencourt | RM569239 | gabrielcarmabittencourtpy@gmail.com |
+| Carlos Eugênio Rodrigues de Andrade Filho | RM570285 | carloseugenioprofissional@gmail.com |
+| Marcio Francisco dos Santos Junior | RM570758 | marciofsantos65@gmail.com |
 | Iúri Leão de Almeida | RM570215 | iurileao@gmail.com |
 | Maria Sophia Domingues dos Santos | — | maria.sophia.domingues@gmail.com |
 
