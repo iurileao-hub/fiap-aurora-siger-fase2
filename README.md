@@ -20,7 +20,6 @@ Sem dependências externas. Usa apenas `math` e `random` da biblioteca padrão.
 | `enunciado-atividade-integradora.md` | Enunciado completo da atividade |
 | `contextualizacao-historica.md` | Seção textual sobre evolução da computação e arquitetura |
 | `esg.md` | Reflexão sobre ESG e governança na base Aurora Siger |
-| `rascunhos/` | Roteiros e versões intermediárias de apoio |
 
 ## Equipe
 
@@ -30,7 +29,7 @@ Sem dependências externas. Usa apenas `math` e `random` da biblioteca padrão.
 | Carlos Eugênio Rodrigues de Andrade Filho | RM570285 | carloseugenioprofissional@gmail.com |
 | Marcio Francisco dos Santos Junior | RM570758 | marciofsantos65@gmail.com |
 | Iúri Leão de Almeida | RM570215 | iurileao@gmail.com |
-| Maria Sophia Domingues dos Santos | — | maria.sophia.domingues@gmail.com |
+| Maria Sophia Domingues dos Santos | RM571209 | maria.sophia.domingues@gmail.com |
 
 ## Licenca
 
